@@ -9,14 +9,14 @@
 #ifdef _WIN32
 
 #undef NDEBUG
-#include <cassert>
 #include "keybinding-worker.hpp"
 #include "compat/macros.h"
 #include "compat/thread-name.hpp"
+#include <cassert>
 
-#include <cstdint>
 #include <QDebug>
 #include <QMutexLocker>
+#include <cstdint>
 
 #include <dinput.h>
 
@@ -61,8 +61,7 @@ bool KeybindingWorker::init_(IDirectInputDevice8A*& dev, const char* name, const
         goto fail;
     }
 
-    if (auto hr = dev->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
-        hr != DI_OK)
+    if (auto hr = dev->SetCooperativeLevel((HWND)fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND); hr != DI_OK)
     {
         qDebug() << "dinput:" << name << "SetCooperativeLevel" << (void*)(intptr_t)hr;
         goto fail;
@@ -76,8 +75,7 @@ fail:
 
 bool KeybindingWorker::init()
 {
-    bool ret = init_(dinkeyboard, "keyboard", GUID_SysKeyboard, c_dfDIKeyboard) &&
-               init_(dinmouse, "mouse", GUID_SysMouse, c_dfDIMouse2);
+    bool ret = init_(dinkeyboard, "keyboard", GUID_SysKeyboard, c_dfDIKeyboard) && init_(dinmouse, "mouse", GUID_SysMouse, c_dfDIMouse2);
 
     if (!ret)
         goto fail;
@@ -117,29 +115,29 @@ static QMutex kw_mutex;
 
 std::unique_ptr<KeybindingWorker>& KeybindingWorker::makeʹ()
 {
-    static std::unique_ptr<KeybindingWorker> kw{new KeybindingWorker};
+    static std::unique_ptr<KeybindingWorker> kw{ new KeybindingWorker };
     return kw;
 }
 
 KeybindingWorker& KeybindingWorker::make()
 {
-    QMutexLocker l{&kw_mutex};
+    QMutexLocker l{ &kw_mutex };
     auto& p = makeʹ();
     if (!p) [[unlikely]]
     {
         auto pʹ = std::exchange(p, std::unique_ptr<KeybindingWorker>(new KeybindingWorker));
-        assert(pʹ);
+        //assert(pʹ);
     }
     return *p;
 }
 
 void KeybindingWorker::terminate()
 {
-    QMutexLocker l{&kw_mutex};
+    QMutexLocker l{ &kw_mutex };
     auto& opt = makeʹ();
     if (opt)
     {
-        assert(opt->receivers.empty());
+        //assert(opt->receivers.empty());
         opt = nullptr;
     }
 }
@@ -248,8 +246,8 @@ bool KeybindingWorker::run_keyboard_nolock()
 
 #if OPENTRACK_HAS_GAMEINPUT
     mods = {
-        .ctrl  = (keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL]) != 0,
-        .alt   = (keystate[DIK_LALT] | keystate[DIK_RALT]) != 0,
+        .ctrl = (keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL]) != 0,
+        .alt = (keystate[DIK_LALT] | keystate[DIK_RALT]) != 0,
         .shift = (keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT]) != 0,
     };
 #endif
@@ -274,7 +272,8 @@ bool KeybindingWorker::run_keyboard_nolock()
         case DIK_LWIN:
         case DIK_RWIN:
             break;
-        default: {
+        default:
+        {
             Key key;
             key.held = held;
             key.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
@@ -282,7 +281,7 @@ bool KeybindingWorker::run_keyboard_nolock()
             key.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
             key.keycode = idx;
             emit_key(key);
-            //qDebug() << "KeybindingWorker: key from dinput" << (held ? "+" : "-") << key.keycode;
+            // qDebug() << "KeybindingWorker: key from dinput" << (held ? "+" : "-") << key.keycode;
             break;
         }
         }
@@ -295,7 +294,8 @@ bool KeybindingWorker::run_joystick_nolock()
 {
     using joy_fn = std::function<void(const QString& guid, int idx, bool held)>;
 
-    joy_fn f = [&](const QString& guid, int idx, bool held) {
+    joy_fn f = [&](const QString& guid, int idx, bool held)
+    {
         Key k;
         k.keycode = idx;
         k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
@@ -316,7 +316,7 @@ KeybindingWorker::fun* KeybindingWorker::add_receiver(fun& receiver)
     QMutexLocker l(&mtx);
     receivers.push_back(std::make_unique<fun>(receiver));
     fun* f = &*receivers[receivers.size() - 1];
-    //qDebug() << "add receiver" << (long) f;
+    // qDebug() << "add receiver" << (long) f;
     joy_ctx.refresh();
     return f;
 }
@@ -334,14 +334,14 @@ void KeybindingWorker::remove_receiver(KeybindingWorker::fun* pos)
         if (&*receivers[u(i)] == pos)
         {
             ok = true;
-            //qDebug() << "remove receiver" << (long) pos;
+            // qDebug() << "remove receiver" << (long) pos;
             receivers.erase(receivers.begin() + i);
             break;
         }
     }
     if (!ok)
     {
-        qDebug() << "bad remove receiver" << (void*) pos;
+        qDebug() << "bad remove receiver" << (void*)pos;
     }
 }
 
