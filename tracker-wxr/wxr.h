@@ -3,7 +3,6 @@
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
 #include "options/options.hpp"
-#include "ui_wxr.h"
 using namespace options;
 
 #include <Winsock2.h>
@@ -22,12 +21,12 @@ using namespace options;
 #include <thread>
 #include <vector>
 
-#include <QThread>
 #include <QMatrix4x4>
 #include <QQuaternion>
 #include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
+#include <ui_wxr.h>
 
 struct settings : opts
 {
@@ -43,9 +42,9 @@ struct settings : opts
     {}
 };
 
-class wxr_tracker : protected QThread, public ITracker
+class wxr_tracker : public ITracker
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     wxr_tracker();
     void Init();
@@ -74,9 +73,6 @@ private:
     std::mutex mtx;
     std::condition_variable cv;
     settings s;
-
-    double last[6]{};
-    Timer t;
 };
 
 class wxr_dialog : public ITrackerDialog

@@ -213,8 +213,8 @@ wxr_tracker::wxr_tracker()
 wxr_tracker::~wxr_tracker()
 {
     KillReceiver();
-    requestInterruption();
-    wait();
+    //requestInterruption();
+    //wait();
 }
 
 void wxr_tracker::ReceiveData()
@@ -351,7 +351,7 @@ std::string wxr_tracker::GetRetData()
 
 module_status wxr_tracker::start_tracker(QFrame*)
 {
-    t.start();
+    //t.start();
     return {};
 }
 

@@ -62,6 +62,9 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     init_dylibs();
     init_shortcuts();
 
+    s.tray_enabled = true;
+    s.tray_start = true;
+
     init_tray_menu();
     setVisible(!start_in_tray());
     ensure_tray();
@@ -75,6 +78,8 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     connect(&*s.b, &options::bundle_::saving, this, &main_window::register_shortcuts);
 
     ui.btnStartTracker->setFocus();
+
+    start_tracker_();
 #ifdef UI_NO_VIDEO_FEED
     fake_video_frame.resize(640, 480);
     fake_video_frame_parent.setVisible(false);
