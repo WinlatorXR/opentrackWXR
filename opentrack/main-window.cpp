@@ -34,6 +34,8 @@
 #include <QDir>
 #include <QDateTime>
 
+#include <Windows.h>
+
 
 #ifdef __APPLE__
 void disable_appnap_start();
@@ -44,6 +46,26 @@ extern "C" const char* const opentrack_version;
 
 using namespace options::globals;
 using namespace options;
+
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
+{
+    // Skip the current window and windows without titles
+    char title[256];
+    GetWindowTextA(hwnd, title, 256);
+    if (IsWindowVisible(hwnd) && strlen(title) > 0)
+    {
+        //Un-minimize it
+        if (IsIconic(hwnd))
+        {
+            ShowWindow(hwnd, SW_RESTORE);
+        }
+
+        // Bring the window to the front
+        SetForegroundWindow(hwnd);
+        return FALSE; // Stop enumerating
+    }
+    return TRUE; // Continue enumerating
+}
 
 main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
@@ -80,6 +102,8 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     ui.btnStartTracker->setFocus();
 
     start_tracker_();
+
+    EnumWindows(EnumWindowsProc, 0);
 #ifdef UI_NO_VIDEO_FEED
     fake_video_frame.resize(640, 480);
     fake_video_frame_parent.setVisible(false);
