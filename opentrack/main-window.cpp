@@ -49,22 +49,19 @@ using namespace options;
 
 BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
 {
-    // Skip the current window and windows without titles
     char title[256];
     GetWindowTextA(hwnd, title, 256);
     if (IsWindowVisible(hwnd) && strlen(title) > 0)
     {
-        //Un-minimize it
         if (IsIconic(hwnd))
         {
             ShowWindow(hwnd, SW_RESTORE);
         }
 
-        // Bring the window to the front
         SetForegroundWindow(hwnd);
-        return FALSE; // Stop enumerating
+        return FALSE;
     }
-    return TRUE; // Continue enumerating
+    return TRUE;
 }
 
 main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)

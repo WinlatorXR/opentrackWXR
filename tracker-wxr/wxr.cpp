@@ -69,6 +69,7 @@ wxr_tracker::wxr_tracker()
             std::ofstream verFile(versionPath);
             if (verFile.is_open())
             {
+                // Use the new version 0.3 of the API for detecting immersive status and SBS enabled of WinlatorXR
                 verFile << "0.3";
                 verFile.close();
             }
@@ -105,7 +106,8 @@ wxr_tracker::wxr_tracker()
             std::ofstream verFile(fallbackVersion);
             if (verFile.is_open())
             {
-                verFile << "0.2";
+                // Use the new version 0.3 of the API for detecting immersive status and SBS enabled of WinlatorXR
+                verFile << "0.3";
                 verFile.close();
             }
             else
