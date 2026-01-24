@@ -8,6 +8,12 @@ Code added or modified from the parent project in this fork is subject to the [L
 
 **NOTE:** This makes breaking changes from the parent project to make the experience more streamlined inside WinlatorXR, see this branch for just the WXR tracking module itself: [https://github.com/bigelod/opentrackWXR/tree/wxr-module-only](https://github.com/bigelod/opentrackWXR/tree/wxr-module-only)
 
+## Usage
+
+Best used as a secondary executable in your target games shortcut with a delayed start of around 3 to 5 seconds
+
+Might require you to "Switch To" your target game to correctly map the input to it (right thumbstick click, right thumbstick tilt over to Task Manager, right trigger to open it, then click your game and "Switch To")
+
 ## Original ReadMe Below
 
 [<img src="https://github.com/opentrack/opentrack/actions/workflows/cmake.yml/badge.svg">](https://github.com/opentrack/opentrack/actions/workflows/cmake.yml)
