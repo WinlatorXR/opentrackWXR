@@ -12,6 +12,8 @@ Code added or modified from the parent project in this fork is subject to the [L
 
 **NOTE:** This makes breaking changes from the parent project to make the experience more streamlined inside WinlatorXR, see this branch for just the WXR tracking module itself: [https://github.com/bigelod/opentrackWXR/tree/wxr-module-only](https://github.com/bigelod/opentrackWXR/tree/wxr-module-only)
 
+Thanks to GmoLargey for both the idea of adding XrAPI support to OpenTrack and testing, and Luboš for his support and development of WinlatorXR!
+
 ## Usage
 
 Best used as a secondary executable in your target games shortcut with a delayed start of around 3 to 5 seconds
