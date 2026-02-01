@@ -1,6 +1,6 @@
 #pragma once
 
-//#define UI_FORCED_TRACKER "pt"
+#define UI_FORCED_TRACKER "wxr"
 //#define UI_FORCED_FILTER "accela"
 
 //#define UI_NO_TRACKER_COMBOBOX

@@ -20,7 +20,7 @@ struct module_names : migration
     Modules m { OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH, dylib_load_quiet };
 
     module_type types[3] {
-        { "tracker-dll", "pt", m.trackers() },
+        { "tracker-dll", "wxr", m.trackers() },
         { "protocol-dll", "freetrack", m.protocols() },
         { "filter-dll", "accela", m.filters() },
     };

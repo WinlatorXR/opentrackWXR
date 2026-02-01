@@ -58,8 +58,11 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
             ShowWindow(hwnd, SW_RESTORE);
         }
 
-        SetForegroundWindow(hwnd);
-        return FALSE;
+        if (SetForegroundWindow(hwnd))
+        {
+            SetFocus(hwnd);
+            return FALSE;
+        }
     }
     return TRUE;
 }

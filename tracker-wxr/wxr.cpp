@@ -215,8 +215,8 @@ wxr_tracker::wxr_tracker()
 wxr_tracker::~wxr_tracker()
 {
     KillReceiver();
-    //requestInterruption();
-    //wait();
+    // requestInterruption();
+    // wait();
 }
 
 void wxr_tracker::ReceiveData()
@@ -353,7 +353,7 @@ std::string wxr_tracker::GetRetData()
 
 module_status wxr_tracker::start_tracker(QFrame*)
 {
-    //t.start();
+    // t.start();
     return {};
 }
 
@@ -388,7 +388,7 @@ void wxr_tracker::data(double* data)
 
     std::string txt = GetRetData();
 
-    //qWarning() << txt;
+    // qWarning() << txt;
 
     std::istringstream iss(txt);
     std::string client;
@@ -436,8 +436,8 @@ void wxr_tracker::data(double* data)
     HMDRawQuat = QVector4D(floats[18], floats[19], -floats[20], floats[21]);
     HMDPos = QVector3D(floats[22], floats[23], floats[24]);
 
-    //QVector4D rollInversion = QVector4D(0.0f, 0.0f, 1.0f, 0.0f); // Quaternion for 180-degree rotation around Z-axis
-    //QVector4D quat = QuaternionMultiply(HMDRawQuat, rollInversion);
+    // QVector4D rollInversion = QVector4D(0.0f, 0.0f, 1.0f, 0.0f); // Quaternion for 180-degree rotation around Z-axis
+    // QVector4D quat = QuaternionMultiply(HMDRawQuat, rollInversion);
 
     // data[1] = openXRFrameID;
     data[0] = floats[22] * -20.0;
@@ -451,13 +451,28 @@ void wxr_tracker::data(double* data)
     {
         data[3] = 360.0 - (hmdEuler.y() * s.yaw_scale_immersive);
         data[4] = hmdEuler.x() * s.pitch_scale_immersive;
-        data[5] = hmdEuler.z() * s.roll_scale_immersive;
+        data[5] = 360.0 - (hmdEuler.z() * s.roll_scale_immersive);
     }
     else
     {
         data[3] = 360.0 - (hmdEuler.y() * s.yaw_scale);
         data[4] = hmdEuler.x() * s.pitch_scale;
-        data[5] = hmdEuler.z() * s.roll_scale;
+        data[5] = 360.0 - (hmdEuler.z() * s.roll_scale);
+    }
+
+    if (data[3] > 360.0)
+    {
+        data[3] -= 360.0;
+    }
+
+    if (data[4] > 360.0)
+    {
+        data[4] -= 360.0;
+    }
+
+    if (data[5] > 360.0)
+    {
+        data[5] -= 360.0;
     }
 }
 
