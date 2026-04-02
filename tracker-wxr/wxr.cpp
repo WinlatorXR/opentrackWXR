@@ -69,8 +69,8 @@ wxr_tracker::wxr_tracker()
             std::ofstream verFile(versionPath);
             if (verFile.is_open())
             {
-                // Use the new version 0.3 of the API for detecting immersive status and SBS enabled of WinlatorXR
-                verFile << "0.3";
+                // Use the new version 0.3 or newer of the API for detecting immersive status and SBS enabled of WinlatorXR
+                verFile << "0.4";
                 verFile.close();
             }
             else
@@ -106,8 +106,8 @@ wxr_tracker::wxr_tracker()
             std::ofstream verFile(fallbackVersion);
             if (verFile.is_open())
             {
-                // Use the new version 0.3 of the API for detecting immersive status and SBS enabled of WinlatorXR
-                verFile << "0.3";
+                // Use the new version 0.3 or newer of the API for detecting immersive status and SBS enabled of WinlatorXR
+                verFile << "0.4";
                 verFile.close();
             }
             else
@@ -228,13 +228,32 @@ void wxr_tracker::ReceiveData()
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(udpPort);
 
+    bool useFallback = false;
+
     try
     {
         bind(udpSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
     }
     catch (const std::exception& e)
     {
-        qWarning() << "[WinXrUDP] Error starting UDP receiver: " << e.what();
+        useFallback = true;
+    }
+
+    if (useFallback) {
+        try
+        {
+            udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
+            memset(&serverAddr, 0, sizeof(serverAddr));
+            serverAddr.sin_family = AF_INET;
+            serverAddr.sin_addr.s_addr = INADDR_ANY;
+            serverAddr.sin_port = htons(udpFallbackPort);
+
+            bind(udpSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+        }
+        catch (const std::exception& e)
+        {
+            qWarning() << "[WinXrUDP] Error starting UDP receiver: " << e.what();
+        }
     }
 
     while (true)
