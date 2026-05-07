@@ -28,6 +28,17 @@
 #include <vector>
 #include <ws2tcpip.h>
 
+inline constexpr double pi = 3.14159265358979323846;
+
+constexpr double deg2rad(double deg) noexcept
+{
+    return deg * pi / 180.0;
+}
+constexpr double rad2deg(double rad) noexcept
+{
+    return rad * 180.0 / pi;
+}
+
 wxr_tracker::wxr_tracker()
 {
     WSADATA wsaData;
@@ -239,7 +250,8 @@ void wxr_tracker::ReceiveData()
         useFallback = true;
     }
 
-    if (useFallback) {
+    if (useFallback)
+    {
         try
         {
             udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -453,7 +465,7 @@ void wxr_tracker::data(double* data)
     isSBS = buttonBools[20];
 
     HMDRawQuat = QVector4D(floats[18], floats[19], -floats[20], floats[21]);
-    HMDPos = QVector3D(floats[22], floats[23], floats[24]);
+    // HMDPos = QVector3D(floats[22], floats[23], floats[24]);
 
     // QVector4D rollInversion = QVector4D(0.0f, 0.0f, 1.0f, 0.0f); // Quaternion for 180-degree rotation around Z-axis
     // QVector4D quat = QuaternionMultiply(HMDRawQuat, rollInversion);
@@ -466,17 +478,27 @@ void wxr_tracker::data(double* data)
     QQuaternion hmdQuat = QQuaternion::QQuaternion(HMDRawQuat); // quat);
     QVector3D hmdEuler = hmdQuat.toEulerAngles();
 
+    float radX = deg2rad(hmdEuler.x());
+    float radY = deg2rad(hmdEuler.y());
+    float radZ = deg2rad(hmdEuler.z());
+
+    float pitch_new_rad = radX * cos(radY) - radZ * sin(radY);
+    float roll_new_rad = radX * sin(radY) + radZ * cos(radY);
+
+    float pitch_new = rad2deg(pitch_new_rad);
+    float roll_new = rad2deg(roll_new_rad);
+
     if (isImmersive)
     {
         data[3] = 360.0 - (hmdEuler.y() * s.yaw_scale_immersive);
-        data[4] = hmdEuler.x() * s.pitch_scale_immersive;
-        data[5] = 360.0 - (hmdEuler.z() * s.roll_scale_immersive);
+        data[4] = pitch_new * s.pitch_scale_immersive;
+        data[5] = 360.0 - (roll_new * s.roll_scale_immersive);
     }
     else
     {
         data[3] = 360.0 - (hmdEuler.y() * s.yaw_scale);
-        data[4] = hmdEuler.x() * s.pitch_scale;
-        data[5] = 360.0 - (hmdEuler.z() * s.roll_scale);
+        data[4] = pitch_new * s.pitch_scale;
+        data[5] = 360.0 - (roll_new * s.roll_scale);
     }
 
     if (data[3] > 360.0)
